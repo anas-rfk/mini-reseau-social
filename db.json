@@ -42,28 +42,8 @@
       "likes": 0
     },
     {
-      "id": "f7f9",
-      "content": "youssef post",
-      "image": "https://picsum.photos/400/300",
-      "hashtags": [
-        "react"
-      ],
-      "authorId": "2",
-      "likes": 0
-    },
-    {
       "id": "7947",
       "content": "edited",
-      "image": "https://picsum.photos/400/300",
-      "hashtags": [
-        "react"
-      ],
-      "authorId": "2",
-      "likes": 0
-    },
-    {
-      "id": "aa28",
-      "content": "test",
       "image": "https://picsum.photos/400/300",
       "hashtags": [
         "react"
