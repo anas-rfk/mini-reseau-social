@@ -1,4 +1,10 @@
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../selectors/auth.selectors";
+
 function PostCard({ post, authorName }) {
+  const currentUser = useSelector(selectCurrentUser);
+
   return (
     <div
       style={{
@@ -32,6 +38,24 @@ function PostCard({ post, authorName }) {
       <p>
         <strong>Likes:</strong> {post.likes ?? 0}
       </p>
+
+      {/* Edit button only for post author */}
+      {currentUser?.id === String(post.authorId) && (
+        <Link
+          to={`/posts/edit/${post.id}`}
+          style={{
+            display: "inline-block",
+            marginTop: 8,
+            padding: "6px 12px",
+            backgroundColor: "#007bff",
+            color: "#fff",
+            borderRadius: 5,
+            textDecoration: "none",
+          }}
+        >
+          Edit
+        </Link>
+      )}
     </div>
   );
 }
