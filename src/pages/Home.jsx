@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../selectors/auth.selectors";
+
 import { fetchPosts } from "../features/posts/thunks";
 import { fetchUsers } from "../features/users/thunks";
 import PostCard from "../components/PostCard";
 
 function Home() {
   const location = useLocation();
+  const currentUser = useSelector(selectCurrentUser);
 
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
@@ -24,15 +28,14 @@ function Home() {
   }, []);
 
   useEffect(() => {
-  if (location.state?.successMessage) {
-    setSuccessMessage(location.state.successMessage);
+    if (location.state?.successMessage) {
+      setSuccessMessage(location.state.successMessage);
 
-    
-    setTimeout(() => {
-      setSuccessMessage("");
-    }, 3000);
-  }
-}, [location.state]);
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
+    }
+  }, [location.state]);
 
   const getAuthorName = (authorId) => {
     const user = users.find((u) => String(u.id) === String(authorId));
@@ -42,23 +45,23 @@ function Home() {
   return (
     <div style={{ padding: 20 }}>
       <h1>Home (liste des posts)</h1>
-        {successMessage && (
-          <div
-            style={{
-              backgroundColor: "#d4edda",
-              color: "#155724",
-              padding: "10px",
-              borderRadius: "5px",
-              marginBottom: "15px",
-            }}
-          >
-            {successMessage}
-          </div>
-  )}
+
+      {successMessage && (
+        <div
+          style={{
+            backgroundColor: "#d4edda",
+            color: "#155724",
+            padding: "10px",
+            borderRadius: "5px",
+            marginBottom: "15px",
+          }}
+        >
+          {successMessage}
+        </div>
+      )}
 
       <p>pathname: {location.pathname}</p>
 
-      
       <p>
         Test link: <Link to="/posts/new">/posts/new</Link>
       </p>
@@ -71,13 +74,17 @@ function Home() {
       <p>
         Test post detail: <Link to="/post/1">/post/1</Link>
       </p>
+
+      {/* ✅ FIX : profile basé sur le user connecté */}
       <p>
-        Test profile: <Link to="/profile/1">/profile/1</Link>
+        My profile:{" "}
+        <Link to={`/profile/${currentUser?.id}`}>
+          /profile/{currentUser?.id}
+        </Link>
       </p>
 
       <hr />
 
-      
       <h2>Posts</h2>
 
       {posts.length === 0 ? (
