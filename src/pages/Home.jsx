@@ -9,6 +9,7 @@ function Home() {
 
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     fetchPosts()
@@ -22,6 +23,17 @@ function Home() {
       .catch((err) => console.error("FETCH USERS ERROR:", err));
   }, []);
 
+  useEffect(() => {
+  if (location.state?.successMessage) {
+    setSuccessMessage(location.state.successMessage);
+
+    
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, 3000);
+  }
+}, [location.state]);
+
   const getAuthorName = (authorId) => {
     const user = users.find((u) => String(u.id) === String(authorId));
     return user ? user.username : "Unknown";
@@ -30,6 +42,20 @@ function Home() {
   return (
     <div style={{ padding: 20 }}>
       <h1>Home (liste des posts)</h1>
+        {successMessage && (
+          <div
+            style={{
+              backgroundColor: "#d4edda",
+              color: "#155724",
+              padding: "10px",
+              borderRadius: "5px",
+              marginBottom: "15px",
+            }}
+          >
+            {successMessage}
+          </div>
+  )}
+
       <p>pathname: {location.pathname}</p>
 
       {/* Links de test */}

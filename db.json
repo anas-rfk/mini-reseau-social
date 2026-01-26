@@ -50,6 +50,42 @@
       ],
       "authorId": "2",
       "likes": 0
+    },
+    {
+      "id": "7947",
+      "content": "test message",
+      "image": "https://picsum.photos/400/300",
+      "hashtags": [
+        "react"
+      ],
+      "authorId": "2",
+      "likes": 0
+    },
+    {
+      "id": "915f",
+      "content": "test",
+      "image": "",
+      "hashtags": [],
+      "authorId": "2",
+      "likes": 0
+    },
+    {
+      "id": "aa28",
+      "content": "test",
+      "image": "https://picsum.photos/400/300",
+      "hashtags": [
+        "react"
+      ],
+      "authorId": "2",
+      "likes": 0
+    },
+    {
+      "id": "afe8",
+      "content": "test",
+      "image": "",
+      "hashtags": [],
+      "authorId": "2",
+      "likes": 0
     }
   ],
   "comments": [

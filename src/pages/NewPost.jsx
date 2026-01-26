@@ -48,7 +48,11 @@ function NewPost() {
       setHashtags("");
 
       // retour home (message succès on fera après)
-      navigate("/");
+      navigate("/", {
+        state: {
+          successMessage: "Votre post est publié 🎉",
+        },
+      });
     } catch (err) {
       console.error("CREATE POST ERROR:", err);
       setError("Erreur lors de la création du post.");
