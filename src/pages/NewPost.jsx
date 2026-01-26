@@ -1,23 +1,58 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../selectors/auth.selectors";
+import { useNavigate, useLocation } from "react-router-dom";
+
+const API_URL = "http://localhost:3001";
 
 function NewPost() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const currentUser = useSelector(selectCurrentUser);
 
   const [content, setContent] = useState("");
   const [image, setImage] = useState("");
   const [hashtags, setHashtags] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    const postData = {
+    if (!currentUser) {
+      setError("Vous devez être connecté.");
+      return;
+    }
+
+    const hashtagsArray = hashtags
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+
+    const newPost = {
       content,
       image,
-      hashtags: hashtags.split(",").map((tag) => tag.trim()),
+      hashtags: hashtagsArray,
+      authorId: currentUser.id,
+      likes: 0,
     };
 
-    console.log("POST DATA:", postData);
+    try {
+      const res = await axios.post(`${API_URL}/posts`, newPost);
+      console.log("CREATED POST:", res.data);
+
+      // reset form
+      setContent("");
+      setImage("");
+      setHashtags("");
+
+      // retour home (message succès on fera après)
+      navigate("/");
+    } catch (err) {
+      console.error("CREATE POST ERROR:", err);
+      setError("Erreur lors de la création du post.");
+    }
   };
 
   return (
@@ -25,8 +60,14 @@ function NewPost() {
       <h1>New Post</h1>
       <p>pathname: {location.pathname}</p>
 
+      {error && (
+        <p style={{ color: "red", fontWeight: "bold" }}>
+          {error}
+        </p>
+      )}
+
       <form onSubmit={handleSubmit}>
-        <div>
+        <div style={{ marginBottom: 10 }}>
           <label>Contenu</label>
           <textarea
             value={content}
@@ -37,17 +78,18 @@ function NewPost() {
           />
         </div>
 
-        <div>
+        <div style={{ marginBottom: 10 }}>
           <label>Image (URL)</label>
           <input
             type="text"
             value={image}
             onChange={(e) => setImage(e.target.value)}
             style={{ width: "100%" }}
+            placeholder="https://picsum.photos/400/300"
           />
         </div>
 
-        <div>
+        <div style={{ marginBottom: 10 }}>
           <label>Hashtags (séparés par des virgules)</label>
           <input
             type="text"
@@ -58,9 +100,7 @@ function NewPost() {
           />
         </div>
 
-        <button type="submit" style={{ marginTop: 12 }}>
-          Créer le post
-        </button>
+        <button type="submit">Créer le post</button>
       </form>
     </div>
   );
