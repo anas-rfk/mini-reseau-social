@@ -42,12 +42,12 @@ function NewPost() {
       const res = await axios.post(`${API_URL}/posts`, newPost);
       console.log("CREATED POST:", res.data);
 
-      // reset form
+      
       setContent("");
       setImage("");
       setHashtags("");
 
-      // retour home (message succès on fera après)
+      
       navigate("/", {
         state: {
           successMessage: "Votre post est publié 🎉",

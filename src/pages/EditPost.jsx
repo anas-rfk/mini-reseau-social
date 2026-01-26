@@ -14,7 +14,7 @@ function EditPost() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 1️⃣ Fetch the post by ID
+  
   useEffect(() => {
     axios
       .get(`${API_URL}/posts/${id}`)
@@ -39,7 +39,7 @@ function EditPost() {
       });
   }, [id]);
 
-  // 2️⃣ Submit the modifications
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -56,7 +56,7 @@ function EditPost() {
     try {
       await axios.patch(`${API_URL}/posts/${id}`, updatedPost);
 
-      // Redirect to Home with success message
+      
       navigate("/", {
         state: {
           successMessage: "Post modifié avec succès ✨",

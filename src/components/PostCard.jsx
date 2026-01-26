@@ -1,9 +1,26 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../selectors/auth.selectors";
+import axios from "axios";
 
-function PostCard({ post, authorName }) {
+const API_URL = "http://localhost:3001";
+
+function PostCard({ post, authorName, onDeleted }) {
   const currentUser = useSelector(selectCurrentUser);
+
+ 
+  const handleDelete = async () => {
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce post ?")) return;
+
+    try {
+      await axios.delete(`${API_URL}/posts/${post.id}`);
+      alert("Post supprimé ✅");
+      if (onDeleted) onDeleted(post.id); 
+    } catch (err) {
+      console.error("DELETE POST ERROR:", err);
+      alert("Erreur lors de la suppression du post ❌");
+    }
+  };
 
   return (
     <div
@@ -39,22 +56,37 @@ function PostCard({ post, authorName }) {
         <strong>Likes:</strong> {post.likes ?? 0}
       </p>
 
-      {/* Edit button only for post author */}
+      
       {currentUser?.id === String(post.authorId) && (
-        <Link
-          to={`/posts/edit/${post.id}`}
-          style={{
-            display: "inline-block",
-            marginTop: 8,
-            padding: "6px 12px",
-            backgroundColor: "#007bff",
-            color: "#fff",
-            borderRadius: 5,
-            textDecoration: "none",
-          }}
-        >
-          Edit
-        </Link>
+        <div style={{ marginTop: 8 }}>
+          <Link
+            to={`/posts/edit/${post.id}`}
+            style={{
+              marginRight: 8,
+              padding: "6px 12px",
+              backgroundColor: "#007bff",
+              color: "#fff",
+              borderRadius: 5,
+              textDecoration: "none",
+            }}
+          >
+            Edit
+          </Link>
+
+          <button
+            onClick={handleDelete}
+            style={{
+              padding: "6px 12px",
+              backgroundColor: "#dc3545",
+              color: "#fff",
+              border: "none",
+              borderRadius: 5,
+              cursor: "pointer",
+            }}
+          >
+            Delete
+          </button>
+        </div>
       )}
     </div>
   );

@@ -58,7 +58,7 @@ function Home() {
 
       <p>pathname: {location.pathname}</p>
 
-      {/* Links de test */}
+      
       <p>
         Test link: <Link to="/posts/new">/posts/new</Link>
       </p>
@@ -77,7 +77,7 @@ function Home() {
 
       <hr />
 
-      {/* Affichage posts */}
+      
       <h2>Posts</h2>
 
       {posts.length === 0 ? (
@@ -88,6 +88,9 @@ function Home() {
             key={post.id}
             post={post}
             authorName={getAuthorName(post.authorId)}
+            onDeleted={(deletedId) =>
+              setPosts((prev) => prev.filter((p) => p.id !== deletedId))
+            }
           />
         ))
       )}
