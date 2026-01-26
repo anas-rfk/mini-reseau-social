@@ -5,17 +5,19 @@ import axios from "axios";
 
 const API_URL = "http://localhost:3001";
 
-function PostCard({ post, authorName, onDeleted }) {
+function PostCard({ post, authorName = "Unknown", onDeleted }) {
   const currentUser = useSelector(selectCurrentUser);
 
- 
+  const isOwner =
+    String(currentUser?.id) === String(post.authorId);
+
   const handleDelete = async () => {
     if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce post ?")) return;
 
     try {
       await axios.delete(`${API_URL}/posts/${post.id}`);
       alert("Post supprimé ✅");
-      if (onDeleted) onDeleted(post.id); 
+      if (onDeleted) onDeleted(post.id);
     } catch (err) {
       console.error("DELETE POST ERROR:", err);
       alert("Erreur lors de la suppression du post ❌");
@@ -56,8 +58,7 @@ function PostCard({ post, authorName, onDeleted }) {
         <strong>Likes:</strong> {post.likes ?? 0}
       </p>
 
-      
-      {currentUser?.id === String(post.authorId) && (
+      {isOwner && (
         <div style={{ marginTop: 8 }}>
           <Link
             to={`/posts/edit/${post.id}`}
