@@ -13,15 +13,17 @@ function PostDetail() {
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
   const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(true);
 
   useEffect(() => {
     fetchPosts().then(setPosts).catch(console.error);
     fetchUsers().then(setUsers).catch(console.error);
-
+      setLoadingComments(true);
     axios
       .get(`${API_URL}/comments?postId=${id}`)
       .then((res) => setComments(res.data))
-      .catch((err) => console.error("FETCH COMMENTS ERROR:", err));
+      .catch((err) => console.error("FETCH COMMENTS ERROR:", err))
+      .finally(() => setLoadingComments(false));
   }, [id]);
 
   const post = useMemo(
@@ -53,8 +55,10 @@ function PostDetail() {
       <hr />
 
       <h2>Commentaires</h2>
-
-      {comments.length === 0 ? (
+       
+      {loadingComments ? (
+        <p>Chargement...</p>
+      ) : comments.length === 0 ? (
         <p>Aucun commentaire</p>
       ) : (
         comments.map((c) => (
