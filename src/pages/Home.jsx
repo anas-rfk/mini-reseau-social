@@ -41,6 +41,10 @@ function Home() {
     const user = users.find((u) => String(u.id) === String(authorId));
     return user ? user.username : "Unknown";
   };
+  const myFirstPost = posts.find(
+  (p) => String(p.authorId) === String(currentUser?.id)
+);
+
 
   return (
     <div style={{ padding: 20 }}>
@@ -72,10 +76,16 @@ function Home() {
         Test my posts: <Link to="/my-posts">/my-posts</Link>
       </p>
       <p>
-        Test post detail: <Link to="/post/1">/post/1</Link>
+        Test post detail:{" "}
+        {myFirstPost ? (
+          <Link to={`/post/${myFirstPost.id}`}>/post/{myFirstPost.id}</Link>
+        ) : (
+          "Aucun post à toi"
+        )}
       </p>
 
-      {/* ✅ FIX : profile basé sur le user connecté */}
+
+      {/* FIX : profile basé sur le user connecté */}
       <p>
         My profile:{" "}
         <Link to={`/profile/${currentUser?.id}`}>
@@ -95,6 +105,7 @@ function Home() {
             key={post.id}
             post={post}
             authorName={getAuthorName(post.authorId)}
+            showActions
             onDeleted={(deletedId) =>
               setPosts((prev) => prev.filter((p) => p.id !== deletedId))
             }

@@ -95,7 +95,23 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
       >
         {hasLiked ? "Unlike" : "Like"}
       </button>
-
+      {showActions && (
+      <Link
+          to={`/post/${post.id}`}
+          style={{
+            marginRight: 8,
+            padding: "6px 12px",
+            backgroundColor: "#17a2b8",
+            color: "#fff",
+            borderRadius: 5,
+            textDecoration: "none",
+            display: "inline-block",
+            marginTop: 8,
+          }}
+        >
+          Détails
+        </Link>
+      )}
       {isOwner && (
         <div style={{ marginTop: 8 }}>
           <Link
@@ -125,6 +141,8 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
           >
             Delete
           </button>
+          
+
         </div>
       )}
     </div>
