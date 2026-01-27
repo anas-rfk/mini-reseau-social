@@ -42,7 +42,7 @@ function MyPosts() {
             post={post}
             authorName={getAuthorName(post.authorId)}
             onDeleted={(deletedId) =>
-             setPosts((prev) => prev.filter((p) => p.id !== deletedId))
+            setPosts((prev) => prev.filter((p) => p.id !== deletedId))
             }
             onUpdated={(updatedPost) =>
               setPosts((prev) =>
