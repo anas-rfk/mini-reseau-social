@@ -2,14 +2,14 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../selectors/auth.selectors";
 import axios from "axios";
+import { patchPost } from "../features/posts/thunks";
 
 const API_URL = "http://localhost:3001";
 
-function PostCard({ post, authorName = "Unknown", onDeleted }) {
+function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActions }) {
   const currentUser = useSelector(selectCurrentUser);
 
-  const isOwner =
-    String(currentUser?.id) === String(post.authorId);
+  const isOwner = String(currentUser?.id) === String(post.authorId);
 
   const handleDelete = async () => {
     if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce post ?")) return;
@@ -21,6 +21,27 @@ function PostCard({ post, authorName = "Unknown", onDeleted }) {
     } catch (err) {
       console.error("DELETE POST ERROR:", err);
       alert("Erreur lors de la suppression du post ❌");
+    }
+  };
+
+  // ✅ Likes basés sur likedBy
+  const likedBy = post.likedBy || [];
+  const userIdStr = String(currentUser?.id || "");
+  const hasLiked = userIdStr ? likedBy.map(String).includes(userIdStr) : false;
+
+  const handleLikeToggle = async () => {
+    if (!userIdStr) return;
+
+    const newLikedBy = hasLiked
+      ? likedBy.filter((id) => String(id) !== userIdStr)
+      : [...likedBy, userIdStr];
+
+    try {
+      const updated = await patchPost(post.id, { likedBy: newLikedBy });
+      if (onUpdated) onUpdated(updated);
+    } catch (err) {
+      console.error("LIKE TOGGLE ERROR:", err);
+      alert("Erreur like ❌");
     }
   };
 
@@ -54,9 +75,26 @@ function PostCard({ post, authorName = "Unknown", onDeleted }) {
         <strong>Hashtags:</strong> {(post.hashtags || []).join(" , ")}
       </p>
 
+      {/* ✅ Affichage correct du nombre de likes */}
       <p>
-        <strong>Likes:</strong> {post.likes ?? 0}
+        <strong>Likes:</strong> {likedBy.length}
       </p>
+
+      <button
+        onClick={handleLikeToggle}
+        style={{
+          padding: "6px 12px",
+          backgroundColor: hasLiked ? "#6c757d" : "#28a745",
+          color: "#fff",
+          border: "none",
+          borderRadius: 5,
+          cursor: "pointer",
+          marginTop: 8,
+          marginRight: 8,
+        }}
+      >
+        {hasLiked ? "Unlike" : "Like"}
+      </button>
 
       {isOwner && (
         <div style={{ marginTop: 8 }}>
