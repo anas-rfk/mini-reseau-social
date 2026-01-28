@@ -27,3 +27,16 @@ export const selectFilteredPosts = (state) => {
     (p.hashtags || []).map((h) => String(h).trim().toLowerCase()).includes(filter)
   );
 };
+
+export const selectAuthorFilter = (state) => state.posts.authorFilter;
+
+export const selectFilteredPostsByAuthor = (state) => {
+  const posts = selectFilteredPosts(state); // 👈 combine avec hashtag
+  const authorId = selectAuthorFilter(state);
+
+  if (!authorId) return posts;
+
+  return posts.filter(
+    (p) => String(p.authorId) === String(authorId)
+  );
+};

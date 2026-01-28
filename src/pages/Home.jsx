@@ -2,17 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
+
 import { selectCurrentUser } from "../selectors/auth.selectors";
 import {
   selectAllHashtags,
   selectFilteredPosts,
   selectHashtagFilter,
+  selectAuthorFilter,
+  selectFilteredPostsByAuthor,
 } from "../selectors/posts.selectors";
 
 import { fetchPosts } from "../features/posts/thunks";
 import { fetchUsers } from "../features/users/thunks";
 
-import { setPosts, updatePost, removePost, setHashtagFilter } from "../features/posts/slice";
+import { setPosts, updatePost, removePost, setHashtagFilter, setAuthorFilter } from "../features/posts/slice";
 
 import PostCard from "../components/PostCard";
 
@@ -23,9 +26,11 @@ function Home() {
   const currentUser = useSelector(selectCurrentUser);
 
   // ✅ posts viennent de Redux
-  const posts = useSelector(selectFilteredPosts);
-  const hashtagFilter = useSelector(selectHashtagFilter);
-  const allHashtags = useSelector(selectAllHashtags);
+  const posts = useSelector(selectFilteredPostsByAuthor);
+const hashtagFilter = useSelector(selectHashtagFilter);
+const authorFilter = useSelector(selectAuthorFilter);
+const allHashtags = useSelector(selectAllHashtags);
+
 
   // ✅ users restent en local (comme ton code)
   const [users, setUsers] = useState([]);
@@ -116,32 +121,57 @@ function Home() {
       {/* ✅ UI Filter hashtag (simple) */}
       <h2>Filtres</h2>
 
-      <div style={{ marginBottom: 16 }}>
-        <label style={{ marginRight: 8 }}>
-          Filtrer par hashtag:
-        </label>
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ marginRight: 8 }}>
+              Filtrer par hashtag:
+            </label>
 
-        <select
-          value={hashtagFilter}
-          onChange={(e) => dispatch(setHashtagFilter(e.target.value))}
+            <select
+              value={hashtagFilter}
+              onChange={(e) => dispatch(setHashtagFilter(e.target.value))}
+            >
+              <option value="">-- Tous --</option>
+              {allHashtags.map((h) => (
+                <option key={h} value={h}>
+                  {h}
+                </option>
+              ))}
+            </select>
+
+            {hashtagFilter && (
+              <button
+                style={{ marginLeft: 10 }}
+                onClick={() => dispatch(setHashtagFilter(""))}
+              >
+                Reset
+              </button>
+            )}
+          </div>
+          <div style={{ marginTop: 10 }}>
+      <label style={{ marginRight: 8 }}>Filtrer par auteur:</label>
+
+      <select
+        value={authorFilter}
+        onChange={(e) => dispatch(setAuthorFilter(e.target.value))}
+      >
+        <option value="">-- Tous --</option>
+        {users.map((u) => (
+          <option key={u.id} value={u.id}>
+            {u.username}
+          </option>
+        ))}
+      </select>
+
+      {authorFilter && (
+        <button
+          style={{ marginLeft: 10 }}
+          onClick={() => dispatch(setAuthorFilter(""))}
         >
-          <option value="">-- Tous --</option>
-          {allHashtags.map((h) => (
-            <option key={h} value={h}>
-              {h}
-            </option>
-          ))}
-        </select>
+          Reset auteur
+        </button>
+      )}
+    </div>
 
-        {hashtagFilter && (
-          <button
-            style={{ marginLeft: 10 }}
-            onClick={() => dispatch(setHashtagFilter(""))}
-          >
-            Reset
-          </button>
-        )}
-      </div>
 
       <hr />
 

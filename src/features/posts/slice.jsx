@@ -5,6 +5,7 @@ const postsSlice = createSlice({
   initialState: {
     items: [],
     hashtagFilter: "",
+    authorFilter: "", // id de l’auteur sélectionné
   },
   reducers: {
     setPosts: (state, action) => {
@@ -26,10 +27,14 @@ const postsSlice = createSlice({
       const id = action.payload;
       state.items = state.items.filter((p) => String(p.id) !== String(id));
     },
+    setAuthorFilter: (state, action) => {
+    state.authorFilter = action.payload; // "" ou userId
+  },
+
   },
 });
 
-export const { setPosts, setHashtagFilter, updatePost, removePost } =
+export const { setPosts, setHashtagFilter, updatePost, removePost , setAuthorFilter, } =
   postsSlice.actions;
 
 export default postsSlice.reducer;
