@@ -4,6 +4,10 @@ import { fetchPosts } from "../features/posts/thunks";
 import { fetchUsers } from "../features/users/thunks";
 import axios from "axios";
 import PostCard from "../components/PostCard";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../selectors/auth.selectors";
+
+
 
 const API_URL = "http://localhost:3001";
 
@@ -14,6 +18,9 @@ function PostDetail() {
   const [users, setUsers] = useState([]);
   const [comments, setComments] = useState([]);
   const [loadingComments, setLoadingComments] = useState(true);
+  const currentUser = useSelector(selectCurrentUser);
+  const [newComment, setNewComment] = useState("");
+  
 
   useEffect(() => {
     fetchPosts().then(setPosts).catch(console.error);
@@ -30,6 +37,24 @@ function PostDetail() {
     () => posts.find((p) => String(p.id) === String(id)),
     [posts, id]
   );
+
+  const handleAddComment = async () => {
+  if (!newComment.trim()) return;
+
+  try {
+    const res = await axios.post(`${API_URL}/comments`, {
+      postId: Number(id),
+      authorId: currentUser.id,
+      content: newComment,
+    });
+
+    setComments((prev) => [...prev, res.data]);
+    setNewComment("");
+  } catch (err) {
+    console.error("ADD COMMENT ERROR:", err);
+  }
+};
+
 
   const getUserName = (userId) => {
     const u = users.find((x) => String(x.id) === String(userId));
@@ -53,6 +78,29 @@ function PostDetail() {
       />
 
       <hr />
+        <h3>Ajouter un commentaire</h3>
+
+      <textarea
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
+        rows={3}
+        style={{ width: "100%", maxWidth: 600 }}
+      />
+
+      <button
+        onClick={handleAddComment}
+        style={{
+          marginTop: 8,
+          padding: "6px 12px",
+          backgroundColor: "#007bff",
+          color: "#fff",
+          border: "none",
+          borderRadius: 5,
+        }}
+      >
+        Commenter
+      </button>
+
 
       <h2>Commentaires</h2>
        
