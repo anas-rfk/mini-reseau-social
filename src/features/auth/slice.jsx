@@ -8,9 +8,12 @@ const authSlice = createSlice({
   reducers: {
     setCurrentUser(state, action) {
       state.currentUser = action.payload;
+    },
+    logout(state){
+      state.currentUser=null;
     }
   }
 });
 
-export const { setCurrentUser } = authSlice.actions;
+export const { setCurrentUser ,logout} = authSlice.actions;
 export default authSlice.reducer;

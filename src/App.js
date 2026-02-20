@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import { selectCurrentUser } from "./selectors/auth.selectors";
-
 import ProtectedRoute from "./components/ProtectedRoute";
+import AppLayout from "./components/AppLayout";
 
 import Login from "./pages/Login";
 import Home from "./pages/Home";
@@ -20,68 +20,26 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        
         <Route
           path="/login"
           element={currentUser ? <Navigate to="/" replace /> : <Login />}
         />
 
-        
         <Route
-          path="/"
           element={
             <ProtectedRoute>
-              <Home />
+              <AppLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="/" element={<Home />} />
+          <Route path="/posts/new" element={<NewPost />} />
+          <Route path="/posts/edit/:id" element={<EditPost />} />
+          <Route path="/my-posts" element={<MyPosts />} />
+          <Route path="/post/:id" element={<PostDetail />} />
+          <Route path="/profile/:id" element={<Profile />} />
+        </Route>
 
-        <Route
-          path="/posts/new"
-          element={
-            <ProtectedRoute>
-              <NewPost />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/posts/edit/:id"
-          element={
-            <ProtectedRoute>
-              <EditPost />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/my-posts"
-          element={
-            <ProtectedRoute>
-              <MyPosts />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/post/:id"
-          element={
-            <ProtectedRoute>
-              <PostDetail />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
-          path="/profile/:id"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-
-        
         <Route path="*" element={<h1>404 NOT FOUND</h1>} />
       </Routes>
     </BrowserRouter>

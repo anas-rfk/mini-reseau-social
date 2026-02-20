@@ -6,10 +6,14 @@ const postsSlice = createSlice({
     items: [],
     hashtagFilter: "",
     authorFilter: "", // id de l’auteur sélectionné
+    status: "idle", // idle | loading | succeeded | failed
+    error: null,
   },
   reducers: {
     setPosts: (state, action) => {
       state.items = action.payload;
+      state.status = "succeeded";
+      state.error = null;
     },
 
     setHashtagFilter: (state, action) => {
@@ -29,12 +33,28 @@ const postsSlice = createSlice({
     },
     setAuthorFilter: (state, action) => {
     state.authorFilter = action.payload; // "" ou userId
+    
+  },
+    setPostsLoading: (state) => {
+    state.status = "loading";
+    state.error = null;
+  },
+    setPostsError: (state, action) => {
+    state.status = "failed";
+    state.error = action.payload;
   },
 
   },
 });
 
-export const { setPosts, setHashtagFilter, updatePost, removePost , setAuthorFilter, } =
-  postsSlice.actions;
+export const {
+  setPostsLoading,
+  setPosts,
+  setPostsError,
+  setHashtagFilter,
+  setAuthorFilter,
+  updatePost,
+  removePost,
+} = postsSlice.actions;
 
 export default postsSlice.reducer;

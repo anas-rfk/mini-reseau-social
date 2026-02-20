@@ -13,25 +13,6 @@
   ],
   "posts": [
     {
-      "id": "1",
-      "content": "Mon premier post sur React !",
-      "image": "https://picsum.photos/400/300",
-      "authorId": 1,
-      "hashtags": [
-        "react",
-        "frontend"
-      ],
-      "likes": 2
-    },
-    {
-      "id": "e59d",
-      "content": "gg",
-      "image": "",
-      "hashtags": [],
-      "authorId": "1",
-      "likes": 0
-    },
-    {
       "id": "a5da",
       "content": "new post",
       "image": "https://picsum.photos/400/300",
@@ -39,7 +20,10 @@
         "js"
       ],
       "authorId": "1",
-      "likes": 0
+      "likes": 0,
+      "likedBy": [
+        "1"
+      ]
     },
     {
       "id": "7947",
@@ -49,7 +33,23 @@
         "react"
       ],
       "authorId": "2",
-      "likes": 0
+      "likes": 0,
+      "likedBy": [
+        "1"
+      ]
+    },
+    {
+      "id": "3896",
+      "content": "hello world this was my first project react  ",
+      "image": "https://picsum.photos/800/450",
+      "hashtags": [
+        "react.js",
+        "html5",
+        "css",
+        "javascript"
+      ],
+      "authorId": "1",
+      "likedBy": []
     }
   ],
   "comments": [
@@ -58,6 +58,66 @@
       "postId": 1,
       "authorId": 2,
       "content": "Très intéressant 👍"
+    },
+    {
+      "id": "770c",
+      "postId": 7947,
+      "authorId": "2",
+      "content": "bonjour"
+    },
+    {
+      "id": "3aab",
+      "postId": 1,
+      "authorId": "2",
+      "content": "keep shining\n"
+    },
+    {
+      "id": "bd12",
+      "postId": 1,
+      "authorId": "1",
+      "content": "tres bien"
+    },
+    {
+      "id": "a04c",
+      "postId": 1,
+      "authorId": "1",
+      "content": "bravo"
+    },
+    {
+      "id": "210d",
+      "postId": null,
+      "authorId": "1",
+      "content": "brlliant"
+    },
+    {
+      "id": "1825",
+      "postId": null,
+      "authorId": "1",
+      "content": "bonne"
+    },
+    {
+      "id": "bcdf",
+      "postId": 7947,
+      "authorId": "1",
+      "content": "tres bonne"
+    },
+    {
+      "id": "ab3a",
+      "postId": 7947,
+      "authorId": "1",
+      "content": "tres bonne youssef\n"
+    },
+    {
+      "id": "ef12",
+      "postId": 3896,
+      "authorId": "2",
+      "content": "bon courage Sara\n"
+    },
+    {
+      "id": "5df8",
+      "postId": 3896,
+      "authorId": "1",
+      "content": "bienvenue"
     }
   ]
 }

@@ -11,23 +11,21 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
 
   const isOwner = String(currentUser?.id) === String(post.authorId);
 
-  const handleDelete = async () => {
-    if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce post ?")) return;
-
-    try {
-      await axios.delete(`${API_URL}/posts/${post.id}`);
-      alert("Post supprimé ✅");
-      if (onDeleted) onDeleted(post.id);
-    } catch (err) {
-      console.error("DELETE POST ERROR:", err);
-      alert("Erreur lors de la suppression du post ❌");
-    }
-  };
-
-  // ✅ Likes basés sur likedBy
   const likedBy = post.likedBy || [];
   const userIdStr = String(currentUser?.id || "");
   const hasLiked = userIdStr ? likedBy.map(String).includes(userIdStr) : false;
+
+  const handleDelete = async () => {
+    if (!window.confirm("Supprimer ce post ?")) return;
+
+    try {
+      await axios.delete(`${API_URL}/posts/${post.id}`);
+      if (onDeleted) onDeleted(post.id);
+    } catch (err) {
+      console.error("DELETE ERROR:", err);
+      alert("Erreur suppression ❌");
+    }
+  };
 
   const handleLikeToggle = async () => {
     if (!userIdStr) return;
@@ -40,111 +38,99 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
       const updated = await patchPost(post.id, { likedBy: newLikedBy });
       if (onUpdated) onUpdated(updated);
     } catch (err) {
-      console.error("LIKE TOGGLE ERROR:", err);
+      console.error("LIKE ERROR:", err);
       alert("Erreur like ❌");
     }
   };
 
   return (
-    <div
-      style={{
-        border: "1px solid #ddd",
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 12,
-        maxWidth: 600,
-      }}
-    >
-      <p>
-        <strong>Auteur:</strong> {authorName}
-      </p>
-
-      <p>
-        <strong>Contenu:</strong> {post.content}
-      </p>
-
-      {post.image && (
-        <img
-          src={post.image}
-          alt="post"
-          style={{ width: "100%", maxWidth: 600, borderRadius: 8 }}
-        />
-      )}
-
-      <p>
-        <strong>Hashtags:</strong> {(post.hashtags || []).join(" , ")}
-      </p>
-
-      {/* ✅ Affichage correct du nombre de likes */}
-      <p>
-        <strong>Likes:</strong> {likedBy.length}
-      </p>
-
-      <button
-        onClick={handleLikeToggle}
-        style={{
-          padding: "6px 12px",
-          backgroundColor: hasLiked ? "#6c757d" : "#28a745",
-          color: "#fff",
-          border: "none",
-          borderRadius: 5,
-          cursor: "pointer",
-          marginTop: 8,
-          marginRight: 8,
-        }}
-      >
-        {hasLiked ? "Unlike" : "Like"}
-      </button>
-      {showActions && (
-      <Link
-          to={`/post/${post.id}`}
-          style={{
-            marginRight: 8,
-            padding: "6px 12px",
-            backgroundColor: "#17a2b8",
-            color: "#fff",
-            borderRadius: 5,
-            textDecoration: "none",
-            display: "inline-block",
-            marginTop: 8,
-          }}
-        >
-          Détails
-        </Link>
-      )}
-      {isOwner && (
-        <div style={{ marginTop: 8 }}>
+    <div className="relative rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-emerald-300">
+      
+      {/* 🔝 Actions en haut à droite */}
+      <div className="absolute top-4 right-4 flex gap-2">
+        {showActions && (
           <Link
-            to={`/posts/edit/${post.id}`}
-            style={{
-              marginRight: 8,
-              padding: "6px 12px",
-              backgroundColor: "#007bff",
-              color: "#fff",
-              borderRadius: 5,
-              textDecoration: "none",
-            }}
+            to={`/post/${post.id}`}
+            className="rounded-full bg-emerald-50 p-2 text-lg transition hover:bg-emerald-100 hover:scale-110"
+            title="Détails"
           >
-            Edit
+            🔍
           </Link>
+        )}
 
-          <button
-            onClick={handleDelete}
-            style={{
-              padding: "6px 12px",
-              backgroundColor: "#dc3545",
-              color: "#fff",
-              border: "none",
-              borderRadius: 5,
-              cursor: "pointer",
-            }}
-          >
-            Delete
-          </button>
-          
+        {isOwner && (
+          <>
+            <Link
+              to={`/posts/edit/${post.id}`}
+              className="rounded-full bg-emerald-50 p-2 text-lg transition hover:bg-emerald-100 hover:scale-110"
+              title="Modifier"
+            >
+              ✏️
+            </Link>
 
-        </div>
-      )}
+            <button
+              onClick={handleDelete}
+              className="rounded-full bg-red-50 p-2 text-lg transition hover:bg-red-100 hover:scale-110"
+              title="Supprimer"
+            >
+              🗑️
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* 📝 Contenu */}
+      <div className="mb-4">
+        <p className="text-sm font-semibold text-emerald-600">
+          {authorName}
+        </p>
+
+        <p className="mt-2 text-slate-800 text-base leading-relaxed">
+          {post.content}
+        </p>
+
+        {post.image && (
+          <img
+            src={post.image}
+            alt="post"
+            className="mt-4 w-full rounded-2xl border border-emerald-100"
+          />
+        )}
+
+        {post.hashtags?.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {post.hashtags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ❤️ Footer Like en bas */}
+      <div className="mt-4 border-t border-emerald-100 pt-4">
+      <div className="flex items-center gap-3">
+        
+        <button
+          onClick={handleLikeToggle}
+          className={`flex items-center gap-2 rounded-full px-4 py-2 text-lg transition duration-200 ${
+            hasLiked
+              ? "bg-emerald-600 text-white hover:bg-emerald-700"
+              : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+          } hover:scale-105 active:scale-95`}
+        >
+          👍
+          <span className="text-sm font-semibold">
+            {likedBy.length}
+          </span>
+        </button>
+
+      </div>
+    </div>
     </div>
   );
 }
