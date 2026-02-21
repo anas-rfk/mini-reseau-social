@@ -1,10 +1,13 @@
 // posts.selectors.js
+import { createSelector } from "@reduxjs/toolkit";
 
 export const selectPosts = (state) => state.posts.items;
 
 export const selectHashtagFilter = (state) => state.posts.hashtagFilter;
 
 export const selectAuthorFilter = (state) => state.posts.authorFilter;
+
+export const selectCurrentUser = (state) => state.auth.currentUser;
 
 // ✅ Liste des hashtags uniques (pour dropdown/chips)
 export const selectAllHashtags = (state) => {
@@ -36,17 +39,34 @@ export const selectFilteredPosts = (state) => {
 
 // ✅ Posts filtrés par hashtag + auteur + tri (dernier en premier)
 export const selectFilteredPostsByAuthor = (state) => {
-  const posts = selectFilteredPosts(state); // combine hashtag
+  const posts = selectFilteredPosts(state);
   const authorId = selectAuthorFilter(state);
 
-  // 1) filtre auteur si besoin
   let filtered = posts;
   if (authorId) {
     filtered = posts.filter((p) => String(p.authorId) === String(authorId));
   }
 
-  // 2) tri : dernier post ajouté => en premier
-  // JSON Server ajoute les nouveaux posts à la fin du tableau
-  // reverse() les met en haut
   return [...filtered].reverse();
 };
+
+// ✅ NOUVEAU: Mes posts (currentUser) triés (dernier en premier)
+export const selectMyPosts = createSelector(
+  [selectPosts, selectCurrentUser],
+  (posts, currentUser) => {
+    if (!currentUser) return [];
+    const mine = posts.filter(
+      (p) => String(p.authorId) === String(currentUser.id)
+    );
+    return [...mine].reverse();
+  }
+);
+
+// ✅ NOUVEAU: Posts d’un utilisateur par id (pour Profile) triés
+export const makeSelectPostsByUserId = (userId) =>
+  createSelector([selectPosts], (posts) => {
+    const filtered = posts.filter(
+      (p) => String(p.authorId) === String(userId)
+    );
+    return [...filtered].reverse();
+  });

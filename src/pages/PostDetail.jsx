@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect,  useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchPosts } from "../features/posts/thunks";
 import { fetchUsers } from "../features/users/thunks";
@@ -6,6 +6,7 @@ import axios from "axios";
 import PostCard from "../components/PostCard";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../selectors/auth.selectors";
+import { selectPostByIdLocal } from "../selectors/postDetail.selector";
 
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
@@ -64,10 +65,7 @@ function PostDetail() {
       .finally(() => setLoadingComments(false));
   }, [id]);
 
-  const post = useMemo(
-    () => posts.find((p) => String(p.id) === String(id)),
-    [posts, id]
-  );
+  const post = selectPostByIdLocal(posts, id);
 
   const getUserName = (userId) => {
     const u = users.find((x) => String(x.id) === String(userId));
@@ -91,7 +89,7 @@ function PostDetail() {
         content: newComment.trim(),
       });
 
-      setComments((prev) => [...prev, res.data]); // dernier en bas
+      setComments((prev) => [res.data, ...prev]); // dernier en bas
       setNewComment("");
     } catch (err) {
       console.error("ADD COMMENT ERROR:", err);
@@ -231,7 +229,7 @@ function PostDetail() {
             </div>
           ) : (
             <div className="grid gap-3">
-              {comments.reverse().map((c) => (
+              {comments.map((c) => (
                 <div
                   key={c.id}
                   className="rounded-3xl border border-emerald-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"

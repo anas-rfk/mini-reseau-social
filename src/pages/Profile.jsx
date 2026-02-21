@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { fetchPosts } from "../features/posts/thunks";
 import { fetchUsers } from "../features/users/thunks";
@@ -7,6 +7,8 @@ import PostCard from "../components/PostCard";
 import Loader from "../components/Loader";
 import EmptyState from "../components/EmptyState";
 import ErrorMessage from "../components/ErrorMessage";
+
+import { selectPostsByUserIdLocal } from "../selectors/profilePosts.selector"; // ✅ NEW
 
 function Profile() {
   const { id } = useParams();
@@ -41,14 +43,8 @@ function Profile() {
 
   const user = users.find((u) => String(u.id) === String(id));
 
-  const userPosts = useMemo(() => {
-    const filtered = posts.filter(
-      (post) => String(post.authorId) === String(id)
-    );
-
-    // ✅ dernier post en premier
-    return [...filtered].reverse();
-  }, [posts, id]);
+  // ✅ plus de filter/reverse dans le composant
+  const userPosts = selectPostsByUserIdLocal(posts, id);
 
   if (loading) {
     return (
@@ -88,11 +84,9 @@ function Profile() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-emerald-50">
       <div className="mx-auto max-w-5xl px-4 py-8">
-
         {/* Header Profile */}
         <div className="mb-8 rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
           <div className="flex items-center justify-between flex-wrap gap-4">
-            
             <div>
               <h1 className="text-4xl font-extrabold text-slate-900">
                 👤 Profil de {user.username}
@@ -119,9 +113,7 @@ function Profile() {
 
         {/* Posts */}
         <div>
-          <h2 className="mb-4 text-2xl font-extrabold text-slate-900">
-            📂 Posts
-          </h2>
+          <h2 className="mb-4 text-2xl font-extrabold text-slate-900">📂 Posts</h2>
 
           {userPosts.length === 0 ? (
             <div className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
