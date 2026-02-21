@@ -2,10 +2,9 @@
 import { createSelector } from "@reduxjs/toolkit";
 
 export const selectPosts = (state) => state.posts.items;
-
 export const selectHashtagFilter = (state) => state.posts.hashtagFilter;
-
 export const selectAuthorFilter = (state) => state.posts.authorFilter;
+export const selectSortBy = (state) => state.posts.sortBy; // ✅ NEW
 
 export const selectCurrentUser = (state) => state.auth.currentUser;
 
@@ -37,20 +36,40 @@ export const selectFilteredPosts = (state) => {
   );
 };
 
-// ✅ Posts filtrés par hashtag + auteur + tri (dernier en premier)
+// ✅ Helper (local) pour compter les likes
+const getLikesCount = (p) => (p?.likedBy ? p.likedBy.length : 0);
+
+// ✅ Posts filtrés par hashtag + auteur + TRI (new ou popular)
 export const selectFilteredPostsByAuthor = (state) => {
   const posts = selectFilteredPosts(state);
   const authorId = selectAuthorFilter(state);
+  const sortBy = selectSortBy(state);
 
+  // 1) filtre auteur
   let filtered = posts;
   if (authorId) {
     filtered = posts.filter((p) => String(p.authorId) === String(authorId));
   }
 
-  return [...filtered].reverse();
+  // 2) tri
+  // immutabilité ✅ => on trie une copie
+  const copy = [...filtered];
+
+  if (sortBy === "popular") {
+    // 🔥 Popularité: likes desc
+    // En cas d’égalité, on garde les plus récents en haut (id desc)
+    return copy.sort((a, b) => {
+      const diff = getLikesCount(b) - getLikesCount(a);
+      if (diff !== 0) return diff;
+      return Number(b.id) - Number(a.id);
+    });
+  }
+
+  // 🕒 New: dernier en premier (comme avant)
+  return copy.reverse();
 };
 
-// ✅ NOUVEAU: Mes posts (currentUser) triés (dernier en premier)
+// ✅ Mes posts (currentUser) triés (dernier en premier)
 export const selectMyPosts = createSelector(
   [selectPosts, selectCurrentUser],
   (posts, currentUser) => {
@@ -62,11 +81,9 @@ export const selectMyPosts = createSelector(
   }
 );
 
-// ✅ NOUVEAU: Posts d’un utilisateur par id (pour Profile) triés
+// ✅ Posts d’un utilisateur par id (pour Profile) triés
 export const makeSelectPostsByUserId = (userId) =>
   createSelector([selectPosts], (posts) => {
-    const filtered = posts.filter(
-      (p) => String(p.authorId) === String(userId)
-    );
+    const filtered = posts.filter((p) => String(p.authorId) === String(userId));
     return [...filtered].reverse();
   });

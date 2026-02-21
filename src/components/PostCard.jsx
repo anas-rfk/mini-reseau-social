@@ -43,15 +43,15 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
     }
   };
 
-  return (
-    <div className="relative rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-emerald-300">
-      
+    return (
+    <div className="group relative overflow-hidden rounded-3xl border border-emerald-100 bg-white/90 p-6 shadow-sm backdrop-blur transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-2xl hover:border-emerald-300 animate-[fadeInUp_0.4s_ease-out]">
+
       {/* 🔝 Actions en haut à droite */}
-      <div className="absolute top-4 right-4 flex gap-2">
+      <div className="absolute top-4 right-4 flex gap-2 opacity-0 transition-all duration-300 group-hover:opacity-100">
         {showActions && (
           <Link
             to={`/post/${post.id}`}
-            className="rounded-full bg-emerald-50 p-2 text-lg transition hover:bg-emerald-100 hover:scale-110"
+            className="rounded-full bg-emerald-50 p-2 text-lg transition-all duration-200 hover:bg-emerald-100 hover:scale-110"
             title="Détails"
           >
             🔍
@@ -62,7 +62,7 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
           <>
             <Link
               to={`/posts/edit/${post.id}`}
-              className="rounded-full bg-emerald-50 p-2 text-lg transition hover:bg-emerald-100 hover:scale-110"
+              className="rounded-full bg-emerald-50 p-2 text-lg transition-all duration-200 hover:bg-emerald-100 hover:scale-110"
               title="Modifier"
             >
               ✏️
@@ -70,7 +70,7 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
 
             <button
               onClick={handleDelete}
-              className="rounded-full bg-red-50 p-2 text-lg transition hover:bg-red-100 hover:scale-110"
+              className="rounded-full bg-red-50 p-2 text-lg transition-all duration-200 hover:bg-red-100 hover:scale-110"
               title="Supprimer"
             >
               🗑️
@@ -81,20 +81,22 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
 
       {/* 📝 Contenu */}
       <div className="mb-4">
-        <p className="text-sm font-semibold text-emerald-600">
+        <p className="text-sm font-semibold text-emerald-600 transition group-hover:text-emerald-700">
           {authorName}
         </p>
 
-        <p className="mt-2 text-slate-800 text-base leading-relaxed">
+        <p className="mt-2 text-slate-800 text-base leading-relaxed transition">
           {post.content}
         </p>
 
         {post.image && (
-          <img
-            src={post.image}
-            alt="post"
-            className="mt-4 w-full rounded-2xl border border-emerald-100"
-          />
+          <div className="mt-4 overflow-hidden rounded-2xl border border-emerald-100">
+            <img
+              src={post.image}
+              alt="post"
+              className="w-full transition duration-500 ease-out group-hover:scale-105"
+            />
+          </div>
         )}
 
         {post.hashtags?.length > 0 && (
@@ -102,7 +104,7 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
             {post.hashtags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700"
+                className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 transition hover:bg-emerald-100"
               >
                 #{tag}
               </span>
@@ -111,26 +113,25 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
         )}
       </div>
 
-      {/* ❤️ Footer Like en bas */}
+      {/* ❤️ Footer Like */}
       <div className="mt-4 border-t border-emerald-100 pt-4">
-      <div className="flex items-center gap-3">
-        
-        <button
-          onClick={handleLikeToggle}
-          className={`flex items-center gap-2 rounded-full px-4 py-2 text-lg transition duration-200 ${
-            hasLiked
-              ? "bg-emerald-600 text-white hover:bg-emerald-700"
-              : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-          } hover:scale-105 active:scale-95`}
-        >
-          👍
-          <span className="text-sm font-semibold">
-            {likedBy.length}
-          </span>
-        </button>
-
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleLikeToggle}
+            className={`flex items-center gap-2 rounded-full px-4 py-2 text-lg font-semibold transition-all duration-200 ${
+              hasLiked
+                ? "bg-emerald-600 text-white shadow-md hover:bg-emerald-700"
+                : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+            } hover:scale-105 active:scale-95`}
+          >
+            👍
+            <span className="text-sm">
+              {likedBy.length}
+            </span>
+          </button>
+        </div>
       </div>
-    </div>
+
     </div>
   );
 }

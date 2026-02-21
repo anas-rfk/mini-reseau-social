@@ -5,8 +5,9 @@ const postsSlice = createSlice({
   initialState: {
     items: [],
     hashtagFilter: "",
-    authorFilter: "", // id de l’auteur sélectionné
-    status: "idle", // idle | loading | succeeded | failed
+    authorFilter: "",
+    sortBy: "new", // ✅ NEW: "new" | "popular"
+    status: "idle",
     error: null,
   },
   reducers: {
@@ -20,6 +21,14 @@ const postsSlice = createSlice({
       state.hashtagFilter = action.payload;
     },
 
+    setAuthorFilter: (state, action) => {
+      state.authorFilter = action.payload;
+    },
+
+    setSortBy: (state, action) => {
+      state.sortBy = action.payload; // "new" ou "popular"
+    },
+
     updatePost: (state, action) => {
       const updated = action.payload;
       state.items = state.items.map((p) =>
@@ -31,19 +40,16 @@ const postsSlice = createSlice({
       const id = action.payload;
       state.items = state.items.filter((p) => String(p.id) !== String(id));
     },
-    setAuthorFilter: (state, action) => {
-    state.authorFilter = action.payload; // "" ou userId
-    
-  },
-    setPostsLoading: (state) => {
-    state.status = "loading";
-    state.error = null;
-  },
-    setPostsError: (state, action) => {
-    state.status = "failed";
-    state.error = action.payload;
-  },
 
+    setPostsLoading: (state) => {
+      state.status = "loading";
+      state.error = null;
+    },
+
+    setPostsError: (state, action) => {
+      state.status = "failed";
+      state.error = action.payload;
+    },
   },
 });
 
@@ -53,6 +59,7 @@ export const {
   setPostsError,
   setHashtagFilter,
   setAuthorFilter,
+  setSortBy, // ✅ NEW
   updatePost,
   removePost,
 } = postsSlice.actions;
