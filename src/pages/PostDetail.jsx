@@ -11,12 +11,13 @@ import { selectPostByIdLocal } from "../selectors/postDetail.selector";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
 import EmptyState from "../components/EmptyState";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:3001";
 
 function PostDetail() {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
   const [comments, setComments] = useState([]);
@@ -84,7 +85,7 @@ function PostDetail() {
       setError("");
 
       const res = await axios.post(`${API_URL}/comments`, {
-        postId: Number(id),
+        postId: String(id),
         authorId: currentUser.id,
         content: newComment.trim(),
       });
@@ -160,7 +161,12 @@ function PostDetail() {
         <PostCard
           post={post}
           authorName={getUserName(post.authorId)}
-          showActions={false}
+          showActions
+          onDeleted={() => {
+            navigate("/", {
+              state: { successMessage: "Post supprimé avec succès 🗑️" },
+            });
+          }}
           onUpdated={(updatedPost) => {
             setPosts((prev) =>
               prev.map((p) =>
@@ -169,7 +175,6 @@ function PostDetail() {
             );
           }}
         />
-
         {/* Add Comment */}
         <div className="mt-6 rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
           <div className="mb-3 flex items-center justify-between">

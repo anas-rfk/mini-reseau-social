@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../selectors/auth.selectors";
 import axios from "axios";
 import { patchPost } from "../features/posts/thunks";
+import { useState } from "react";
 
 const API_URL = "http://localhost:3001";
 
@@ -14,14 +15,25 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
   const likedBy = post.likedBy || [];
   const userIdStr = String(currentUser?.id || "");
   const hasLiked = userIdStr ? likedBy.map(String).includes(userIdStr) : false;
-
+  const [isDeleting, setIsDeleting] = useState(false);
   const handleDelete = async () => {
     if (!window.confirm("Supprimer ce post ?")) return;
 
     try {
+      setIsDeleting(true);
       await axios.delete(`${API_URL}/posts/${post.id}`);
       if (onDeleted) onDeleted(post.id);
+      // ✅ Succès → on notifie le parent (PostDetail va navigate)
+      onDeleted?.(post.id);
     } catch (err) {
+       // ✅ Si le post est déjà supprimé (double click / refresh / etc.) => on traite comme succès
+      if (err?.response?.status === 404) {
+        onDeleted?.(post.id);
+        return;
+      }
+
+
+
       console.error("DELETE ERROR:", err);
       alert("Erreur suppression ❌");
     }
@@ -70,6 +82,7 @@ function PostCard({ post, authorName = "Unknown", onDeleted, onUpdated, showActi
 
             <button
               onClick={handleDelete}
+              disabled={isDeleting}
               className="rounded-full bg-red-50 p-2 text-lg transition-all duration-200 hover:bg-red-100 hover:scale-110"
               title="Supprimer"
             >
